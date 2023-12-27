@@ -1,0 +1,17 @@
+-- queries.sqlc
+
+-- name: createUser
+INSERT INTO users (name, phone_number, otp, otp_expiration_time)
+VALUES ($1, $2, $3, $4)
+RETURNING id;
+
+-- name: generateOTP
+UPDATE users
+SET otp = $1, otp_expiration_time = $2
+WHERE phone_number = $3
+RETURNING id;
+
+-- name: verifyOTP
+SELECT COUNT(*)
+FROM users
+WHERE phone_number = $1 AND otp = $2 AND otp_expiration_time > NOW();
